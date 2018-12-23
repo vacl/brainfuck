@@ -1,3 +1,4 @@
+HEADERDIR = inc
 SRCDIR = src
 OBJDIR = obj
 
@@ -9,7 +10,7 @@ brainfuck: $(OBJDIR)/$(OBJS)
 	g++ $(OBJDIR)/$(OBJS) -o brainfuck
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.cc
-	g++ -c $< -o $@
+	g++ -c -I$(HEADERDIR) $< -o $@
 
 clean:
 	rm -f $(OBJDIR)/*
