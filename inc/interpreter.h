@@ -1,9 +1,11 @@
+#ifndef INTERPRETER_H
+#define INTERPRETER_H
 #include "tape.h"
 
 #include <stdint.h>
+#include <vector>
+#include <stack>
 
-#IFNDEF INTERPRETER_H
-#DEFINE INTERPRETER_H
 class Interpreter{
 private:
 	Tape *t;
@@ -11,6 +13,7 @@ private:
 	bool execute(std::vector<char> *code, uint32_t *instructionPointer, std::stack<uint32_t> *loops);
 public:
 	Interpreter();
+	~Interpreter();
 	void run(char* source);
 };
-#ENDIF
+#endif

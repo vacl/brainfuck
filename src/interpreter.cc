@@ -1,15 +1,16 @@
 #include "interpreter.h"
 
 #include <iostream>
-#include <vector>
-#include <stack>
 #include <fcntl.h>
 #include <unistd.h>
 #include <string.h>
 
 Interpreter::Interpreter(){
-	t();
-	instructionPointer = 0;
+	t = new Tape();
+}
+
+Interpreter::~Interpreter(){
+	delete t;
 }
 
 void Interpreter::run(char* source){
@@ -20,10 +21,11 @@ void Interpreter::run(char* source){
 		return;
 	}
 
-	std::stack<uint32_t> loopStack();
+	std::stack<uint32_t> loopStack;
 	uint32_t instructionPointer = 0;
 
-	while(execute(&code, &instructionPointer, &loopStack));	
+	while(execute(&code, &instructionPointer, &loopStack));
+	std::cout << std::endl;
 }
 
 int8_t Interpreter::process(char *source, std::vector<char> *target){
@@ -32,22 +34,26 @@ int8_t Interpreter::process(char *source, std::vector<char> *target){
 
 	int16_t readB;
 	char buf[512];
+	int16_t loopCounter = 0;
 	do{
 		readB = read(file, buf, 512);
 		if(readB < 0) return -2;	//error while reading
 
 		for(uint16_t i = 0; i < readB; i++){
 			if(strchr("<>+-,.[]", buf[i]) != NULL) target->push_back(buf[i]);
+			if(buf[i] == '[') loopCounter++;
+			else if(buf[i] == ']') loopCounter--;
 		}
 	} while(readB == 512);
 
+	if(loopCounter != 0) return -3;	//mismatched loop(s)
 	file = close(file);
-	if(file < 0) return -3;		//error while closing
+	if(file < 0) return -4;		//error while closing
 	return 0;
 }
 
-bool Interpreter.execute(std::vector<char> *code, uint32_t *instructionPointer, std::stack<uint32_t> *loops){
-	switch(code->at(instructionPointer)){
+bool Interpreter::execute(std::vector<char> *code, uint32_t *instructionPointer, std::stack<uint32_t> *loops){
+	switch(code->at(*instructionPointer)){
 	case '<':
 		t->moveLeft();
 		break;
@@ -70,7 +76,7 @@ bool Interpreter.execute(std::vector<char> *code, uint32_t *instructionPointer, 
 		loops->push(*instructionPointer);
 		break;
 	case ']':
-		if(t->value() > 0) *instructionPointer = loops->top();
+		if(t->getValue() > 0) *instructionPointer = loops->top();
 		else loops->pop();
 		break;
 	}

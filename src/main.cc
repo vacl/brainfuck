@@ -7,8 +7,9 @@ int main(int argc, char **argv){
 		return 0;
 	}
 
-	Interpreter *i();
+	Interpreter *i = new Interpreter();
 	i->run(argv[1]);
+	delete i;
 	
 	return 0;
 }
