@@ -2,12 +2,12 @@ HEADERDIR = inc
 SRCDIR = src
 OBJDIR = obj
 
-OBJS = main.o interpreter.o tape.o cell.o
+OBJS = $(OBJDIR)/main.o $(OBJDIR)/interpreter.o $(OBJDIR)/tape.o $(OBJDIR)/cell.o
 
 all: brainfuck
 
-brainfuck: $(OBJDIR)/$(OBJS)
-	g++ $(OBJDIR)/$(OBJS) -o brainfuck
+brainfuck: $(OBJS)
+	g++ $(OBJS) -o $@
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.cc
 	g++ -c -I$(HEADERDIR) $< -o $@
