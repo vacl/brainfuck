@@ -46,8 +46,8 @@ int8_t Interpreter::process(char *source, std::vector<char> *target){
 		}
 	} while(readB == 512);
 
-	if(loopCounter != 0) return -3;	//mismatched loop(s)
 	file = close(file);
+	if(loopCounter != 0) return -3;	//mismatched loop(s)
 	if(file < 0) return -4;		//error while closing
 	return 0;
 }
@@ -73,7 +73,8 @@ bool Interpreter::execute(std::vector<char> *code, uint32_t *instructionPointer,
 		t->read();
 		break;
 	case '[':
-		loops->push(*instructionPointer);
+		if(t->getValue() > 0) loops->push(*instructionPointer);
+		else skipLoop(code, instructionPointer);
 		break;
 	case ']':
 		if(t->getValue() > 0) *instructionPointer = loops->top();
@@ -83,4 +84,9 @@ bool Interpreter::execute(std::vector<char> *code, uint32_t *instructionPointer,
 	
 	(*instructionPointer)++;
 	return *instructionPointer < code->size();
+}
+
+void Interpreter::skipLoop(std::vector<char> *code, uint32_t *instructionPointer){
+	if((*code)[*instructionPointer] != '[') return;
+	while((*code)[*instructionPointer] != ']') (*instructionPointer)++;
 }
