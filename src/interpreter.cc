@@ -33,11 +33,12 @@ int8_t Interpreter::process(char *source, std::vector<char> *target){
 	if(file < 0) return -1;		//error while opening
 
 	int16_t readB;
-	char buf[512];
+	char buf[513];
 	int16_t loopCounter = 0;
 	do{
 		readB = read(file, buf, 512);
 		if(readB < 0) return -2;	//error while reading
+		buf[readB] = '\0';
 
 		for(uint16_t i = 0; i < readB; i++){
 			if(strchr("<>+-,.[]", buf[i]) != NULL) target->push_back(buf[i]);
